@@ -10,14 +10,19 @@ export default ({ code = ''}) => {
     memory: [],
     callValue: new BN(0),
     returnValue: false,
+    stopped: false,
   }
   let isRunning = true
   while (isRunning) {
-    const { programCounter, code, returnValue } = state
+    const {
+      programCounter,
+      code,
+     } = state
     const opCode = code[programCounter]
     state.programCounter ++
     execute(fetch(opCode), state)
-    isRunning = programCounter <= code.length && !returnValue.length
+    isRunning = state.programCounter < code.length
+      && !state.returnValue.length
+      && !state.stopped
   }
-  console.log(state.returnValue.toString('hex'))
 }

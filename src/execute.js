@@ -9,9 +9,14 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     code,
     memory,
     callValue,
+    stopped,
   } = state
   switch (opName) {
     // 0s: Stop and Arithmetic Operations
+    case 'STOP': {
+      state.stopped = true
+      break
+    }
     case 'ADD': {
       const a = stack.pop()
       const b = stack.pop()
