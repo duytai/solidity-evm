@@ -1,6 +1,6 @@
 import runCode from './src/runCode'
 
-const code = '60056004006004'
+const code = '600560040b'
 runCode({
   code: Buffer.from(code, 'hex')
 })
