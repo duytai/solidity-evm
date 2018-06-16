@@ -1,6 +1,21 @@
+import abi from 'ethereumjs-abi'
 import runCode from './src/runCode'
 
-const code = '600560040b'
-runCode({
-  code: Buffer.from(code, 'hex')
+const code = '60806040526000805534801561001457600080fd5b50600080815480929190600101919050555060a1806100346000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063cc80f6f3146044575b600080fd5b348015604f57600080fd5b506056606c565b6040518082815260200191505060405180910390f35b600080549050905600a165627a7a7230582018af45365244314b18425e635c26f3f6d4511d8db76f3ba42a40ec673befbfdc0029'
+
+console.log('--> Create Contract')
+const storage = {}
+const { returnValue } = runCode({
+  code: Buffer.from(code, 'hex'),
+  storage,
 })
+console.log('--> Run contract')
+const showABI = abi.methodID('show', [])
+const d = runCode({
+  code: returnValue,
+  callData: showABI,
+  storage,
+})
+console.log(d)
+
+

@@ -1,8 +1,8 @@
 import BN from 'bn.js'
+import createKeccakHash from 'keccak'
 
 const TWO_POW256 = new BN('10000000000000000000000000000000000000000000000000000000000000000', 16)
-const storage = {} // key - value storage
-
+const keccak = buf => createKeccakHash('keccak256').update(buf).digest()
 export default ({ opCode, opName, numIns, numOuts }, state) => {
   const {
     programCounter,
@@ -11,6 +11,12 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     memory,
     callValue,
     stopped,
+    address,
+    storage,
+    accounts,
+    origin,
+    caller,
+    callData,
   } = state
   switch (opName) {
     // 0s: Stop and Arithmetic Operations
@@ -208,11 +214,110 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       }
       break
     }
-    case 'PUSH': {
-      const numToPush = opCode - 0x5f
-      const data = new BN(code.slice(programCounter, programCounter + numToPush).toString('hex'), 16)
-      stack.push(data)
-      state.programCounter += numToPush
+    case 'SHA3': {
+      const offset = stack.pop().toNumber()
+      const length = stack.pop().toNumber()
+      const data = Buffer.from(memory.slice(offset, offset + length))
+      stack.push(keccak(data))
+      break
+    }
+    case 'ADDRESS': {
+      stack.push(address)
+      break
+    }
+    case 'BALANCE': {
+      const address = stack.pop().toString('hex')
+      const balance = accounts[address] ? new BN(accounts[address]) : new BN(0)
+      stack.push(balance)
+      break
+    }
+    case 'ORIGIN': {
+      stack.push(origin)
+      break
+    }
+    case 'CALLER': {
+      stack.push(caller)
+    }
+    case 'CALLVALUE': {
+      stack.push(callValue)
+      break
+    }
+    case 'CALLDATALOAD': {
+      const pos = stack.pop().toNumber()
+      if (pos > callData.length) {
+        stack.push(new BN(0))
+      } else {
+        const data = callData.slice(pos, pos + 32)
+        stack.push(new BN(data))
+      }
+      break
+    }
+    case 'CALLDATASIZE': {
+      stack.push(new BN(callData.length))
+      break
+    }
+    case 'CALLDATACOPY': {
+      const memOffset = stack.pop().toNumber()
+      const dataOffset = stack.pop().toNumber()
+      const dataLength = stack.pop().toNumber()
+      const data = callData.slice(dataOffset, dataOffset + dataLength)
+      for (let i = 0; i < data.length; i++) {
+        memory[memOffset + i] = data[i]
+      }
+      break
+    }
+    case 'CODESIZE': {
+      stack.push(new BN(code.length))
+      break
+    }
+    case 'CODECOPY': {
+      const memOffset = stack.pop().toNumber()
+      const codeOffset = stack.pop().toNumber()
+      const codeLength = stack.pop().toNumber()
+      const data = code.slice(codeOffset, codeOffset + codeLength)
+      for (let i = 0; i < data.length; i++) {
+        memory[i + memOffset] = data[i]
+      }
+      break
+    }
+    case 'EXTCODESIZE': {
+      //TODO
+      break
+    }
+    case 'EXTCODECOPY': {
+      //TODO
+      break
+    }
+    case 'BLOCKHASH': {
+      //TODO
+      break
+    }
+    case 'COINBASE': {
+      //TODO
+      break
+    }
+    case 'TIMESTAMP': {
+      //TODO
+      break
+    }
+    case 'NUMBER': {
+      //TODO
+      break
+    }
+    case 'DIFFICULTY': {
+      break
+    }
+    case 'GASLIMIT': {
+      break
+    }
+    case 'POP': {
+      stack.pop()
+      break
+    }
+    case 'MLOAD': {
+      const memOffset = stack.pop().toNumber()
+      const data = memory.slice(memOffset, memOffset + 32)
+      stack.push(Buffer.from(data))
       break
     }
     case 'MSTORE': {
@@ -223,14 +328,58 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       }
       break
     }
+    case 'MSTORE8': {
+      const memOffset = stack.pop()
+      const byte = Buffer.from([ stack.pop().andln(0xff) ])
+      memory[memOffset] = byte[0]
+      break
+    }
+    case 'SLOAD': {
+      const key = stack.pop().toString('hex')
+      const value = storage[key]
+      stack.push(value)
+      break
+    }
     case 'SSTORE': {
       const key = stack.pop().toString('hex')
       const value = stack.pop()
       storage[key] = value
       break
     }
-    case 'CALLVALUE': {
-      stack.push(callValue)
+    case 'JUMP': {
+      const dest = stack.pop().toNumber()
+      state.programCounter = dest
+      break
+    }
+    case 'JUMPI': {
+      const dest = stack.pop().toNumber()
+      const cond = stack.pop()
+      if (!cond.isZero()) {
+        state.programCounter = dest
+      }
+      break
+    }
+    case 'PC': {
+      stack.push(new BN(programCounter - 1))
+      break
+    }
+    case 'MSIZE': {
+      stack.push(new BN(memory.length * 32))
+      break
+    }
+    case 'GAS': {
+      // TODO
+      break
+    }
+    case 'JUMPDEST': {
+      // TODO
+      break
+    }
+    case 'PUSH': {
+      const numToPush = opCode - 0x5f
+      const data = new BN(code.slice(programCounter, programCounter + numToPush).toString('hex'), 16)
+      stack.push(data)
+      state.programCounter += numToPush
       break
     }
     case 'DUP': {
@@ -239,11 +388,43 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       stack.push(value)
       break
     }
+    case 'SWAP': {
+      const stackPos = opCode - 0x8f
+      const swapIndex = stack.length - stackPos - 1
+      const topIndex = stack.length - 1
+      const tmp = stack[topIndex]
+      stack[topIndex] = stack[swapIndex]
+      stack[swapIndex] = tmp
+      break
+    }
+    case 'LOG': {
+      break
+    }
+    case 'CREATE': {
+      //TODO
+      break
+    }
+    case 'CALL': {
+      //TODO
+      break
+    }
+    case 'CALLCODE': {
+      //TODO
+      break
+    }
     case 'RETURN': {
       const offset = stack.pop().toNumber()
       const length = stack.pop().toNumber()
       const val = memory.slice(offset, offset + length)
       state.returnValue = Buffer.from(val)
+      break
+    }
+    case 'DELEGATECALL': {
+      //TODO
+      break
+    }
+    case 'SUICIDE': {
+      //TODO
       break
     }
   }
