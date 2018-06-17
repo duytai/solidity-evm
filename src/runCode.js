@@ -7,7 +7,12 @@ const whiteBuffer = size => {
   for (let i = 0; i < size; i++) d.push(0)
   return Buffer.from(d)
 }
-export default ({ code = '', callData = whiteBuffer(0), storage = {}}) => {
+export default ({
+  code = '',
+  callData = whiteBuffer(0),
+  storage = {},
+  accounts = {},
+}) => {
   const state = {
     programCounter: 0,
     code,
@@ -17,11 +22,11 @@ export default ({ code = '', callData = whiteBuffer(0), storage = {}}) => {
     callData,
     returnValue: false, // RETURN opCode
     stopped: false, // STOP opCode
-    address: whiteBuffer(20), // Address of running user
+    address: new BN(0), // Address of running user
     caller: new BN(0),
     origin: new BN(0),
     storage,
-    accounts: {}
+    accounts,
   }
   let isRunning = true
   while (isRunning) {
@@ -30,11 +35,11 @@ export default ({ code = '', callData = whiteBuffer(0), storage = {}}) => {
       code,
      } = state
     const opCode = code[programCounter]
-    state.programCounter ++
-    console.log(`>> ${fetch(opCode).opName}`)
-    execute(fetch(opCode), state)
+    console.log(`>> 0x${state.programCounter.toString(16)} ${fetch(opCode).opName}`)
     console.log(state.stack)
-    console.log(state.storage)
+    //console.log(state.storage)
+    state.programCounter ++
+    execute(fetch(opCode), state)
     isRunning = state.programCounter < code.length
       && !state.returnValue.length
       && !state.stopped

@@ -281,6 +281,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'EXTCODESIZE': {
+      process.exit()
       //TODO
       break
     }
@@ -317,7 +318,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     case 'MLOAD': {
       const memOffset = stack.pop().toNumber()
       const data = memory.slice(memOffset, memOffset + 32)
-      stack.push(Buffer.from(data))
+      stack.push(new BN(data))
       break
     }
     case 'MSTORE': {
@@ -336,7 +337,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     }
     case 'SLOAD': {
       const key = stack.pop().toString('hex')
-      const value = storage[key]
+      const value = new BN(storage[key])
       stack.push(value)
       break
     }
