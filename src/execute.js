@@ -17,6 +17,8 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     origin,
     caller,
     callData,
+    gasLeft,
+    runCode,
   } = state
   switch (opName) {
     // 0s: Stop and Arithmetic Operations
@@ -281,34 +283,49 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'EXTCODESIZE': {
-      process.exit()
-      //TODO
+      const address = stack.pop().toString('hex')
+      const { code } = accounts[address]
+      stack.push(new BN(code.length))
       break
     }
     case 'EXTCODECOPY': {
-      //TODO
+      const address = stack.pop().toString('hex')
+      const memOffset = stack.pop().toNumber()
+      const codeOffset = stack.pop().toNumber()
+      const codeLength = stack.pop().toNumber()
+      const { code } = accounts[address]
+      const data = code.slice(codeOffset, codeOffset + codeLength)
+      for (let i = 0; i < data.length; i++) {
+        memory[i + memOffset] = data[i]
+      }
       break
     }
     case 'BLOCKHASH': {
       //TODO
+      process.exit()
       break
     }
     case 'COINBASE': {
       //TODO
+      process.exit()
       break
     }
     case 'TIMESTAMP': {
       //TODO
+      process.exit()
       break
     }
     case 'NUMBER': {
       //TODO
+      process.exit()
       break
     }
     case 'DIFFICULTY': {
+      process.exit()
       break
     }
     case 'GASLIMIT': {
+      process.exit()
       break
     }
     case 'POP': {
@@ -369,11 +386,10 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'GAS': {
-      // TODO
+      stack.push(gasLeft)
       break
     }
     case 'JUMPDEST': {
-      // TODO
       break
     }
     case 'PUSH': {
@@ -403,14 +419,26 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     }
     case 'CREATE': {
       //TODO
+      process.exit()
       break
     }
     case 'CALL': {
-      //TODO
+      const gasLimit = stack.pop()
+      const toAddress = stack.pop().toString('hex')
+      const value = stack.pop()
+      const inOffset = stack.pop()
+      const inLength = stack.pop()
+      const outOffset = stack.pop()
+      const outLength = stack.pop()
+      const data = memory.slice(inOffset, inOffset + inLength)
+      const toAccount = accounts[toAddress]
+      
+      process.exit()
       break
     }
     case 'CALLCODE': {
       //TODO
+      process.exit()
       break
     }
     case 'RETURN': {
@@ -422,6 +450,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     }
     case 'DELEGATECALL': {
       //TODO
+      process.exit()
       break
     }
     case 'SUICIDE': {

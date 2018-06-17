@@ -1,25 +1,35 @@
 import abi from 'ethereumjs-abi'
+import BN from 'bn.js'
+import { randomAddress } from './src/lib'
 import runCode from './src/runCode'
+import data from './data'
 
-const code = '60806040526000805534801561001457600080fd5b506000808154809291906001019190505550610158806100356000396000f30060806040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063cc80f6f314610051578063e8927fbc1461007c575b600080fd5b34801561005d57600080fd5b50610066610093565b6040518082815260200191505060405180910390f35b34801561008857600080fd5b50610091610119565b005b60003073ffffffffffffffffffffffffffffffffffffffff1663e8927fbc6040518163ffffffff167c0100000000000000000000000000000000000000000000000000000000028152600401600060405180830381600087803b1580156100f957600080fd5b505af115801561010d573d6000803e3d6000fd5b50505050600054905090565b60008081548092919060010191905055505600a165627a7a72305820e8c519a8e98bd9a16d2b2a46019473e64b2337f2d679d478b5202bb7ad9991c80029'
-
-console.log('--> Create Contract')
+const { code, callData } = data
+const address = randomAddress()
 const storage = {}
-const accounts = {}
+const accounts = {
+  [address]: {
+    code: '',
+    balance: 0,
+  }
+}
+// DEPLOY CONTRACT
 const { returnValue } = runCode({
-  code: Buffer.from(code, 'hex'),
+  code,
   storage,
   accounts,
+  address: new BN(address, 'hex'),
+  gasLeft: new BN(1000),
 })
-console.log('--> Run contract')
-const showABI = abi.methodID('show', [])
-const callData = new Buffer(
-  `${showABI.toString('hex')}00000000000000000000000000000000000000000000000000000000`, 'hex'
-)
+accounts[address].code = returnValue
+// RUN METHOD
+console.log('----METHOD----')
 const d = runCode({
-  code: returnValue,
+  code: accounts[address].code,
   storage,
   callData,
   accounts,
+  address: new BN(address, 'hex'),
+  gasLeft: new BN(1000),
 })
 console.log(d)
