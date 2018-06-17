@@ -425,15 +425,44 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     case 'CALL': {
       const gasLimit = stack.pop()
       const toAddress = stack.pop().toString('hex')
-      const value = stack.pop()
-      const inOffset = stack.pop()
-      const inLength = stack.pop()
-      const outOffset = stack.pop()
-      const outLength = stack.pop()
+      const value = stack.pop().toNumber()
+      const inOffset = stack.pop().toNumber()
+      const inLength = stack.pop().toNumber()
+      const outOffset = stack.pop().toNumber()
+      const outLength = stack.pop().toNumber()
       const data = memory.slice(inOffset, inOffset + inLength)
-      const toAccount = accounts[toAddress]
-      
-      process.exit()
+      for (let i = data.length; i < 32; i++) {
+        data[i] = 0
+      }
+      let toAccount = accounts[toAddress]
+      const sender = accounts[address.toString('hex')]
+      if (!toAccount) {
+        toAccount = {
+          code: Buffer.from([]),
+          balance: 0,
+        }
+        accounts[toAddress] = toAccount
+      }
+      // check enough ether
+      sender.balance += value
+      toAccount.balance -= value
+      // run code
+      const { code } = toAccount
+      const { returnValue } = runCode({
+        code,
+        storage,
+        callData: Buffer.from(data),
+        accounts,
+        address,
+        gasLeft,
+      })
+      if (returnValue.length) {
+        for (let i = 0; i < outLength; i++) {
+          memory[outOffset + i] = returnValue[i]
+        }
+      }
+      // SUCCESS
+      stack.push(new BN(1))
       break
     }
     case 'CALLCODE': {

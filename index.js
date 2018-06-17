@@ -32,4 +32,4 @@ const d = runCode({
   address: new BN(address, 'hex'),
   gasLeft: new BN(1000),
 })
-console.log(d)
+console.log('->> ' + d.returnValue.toString('hex'))
