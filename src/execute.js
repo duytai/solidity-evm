@@ -468,6 +468,8 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         accounts,
         address,
         gasLeft,
+        caller,
+        origin,
       })
       state.lastReturned = returnValue
       if (returnValue.length) {
@@ -505,7 +507,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     default: {
-      console.log('NOT IMPLEMNTED YET')
+      console.log('NOT IMPLEMENTED YET')
       process.exit()
     }
   }
