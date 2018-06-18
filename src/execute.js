@@ -241,6 +241,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     }
     case 'CALLER': {
       stack.push(caller)
+      break
     }
     case 'CALLVALUE': {
       stack.push(callValue)
@@ -456,7 +457,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         accounts[toAddress] = toAccount
       }
       state.lastReturned = Buffer.from([])
-      // check enough ether
+      // TODO: check enough ether
       sender.balance += value
       toAccount.balance -= value
       // run code
@@ -477,7 +478,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
           memory[outOffset + i] = returnValue[i]
         }
       }
-      // SUCCESS
+      // SUCCESS | TODO: FAILED
       stack.push(new BN(1))
       break
     }
