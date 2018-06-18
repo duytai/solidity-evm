@@ -250,7 +250,9 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         stack.push(new BN(0))
       } else {
         const data = callData.slice(pos, pos + 32)
-        stack.push(new BN(data))
+        const paddingBytes = Buffer.from([...Array(32 - data.length)].map(i => 0))
+        const fullData = Buffer.concat([data, paddingBytes])
+        stack.push(new BN(fullData))
       }
       break
     }
@@ -443,6 +445,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         }
         accounts[toAddress] = toAccount
       }
+      state.lastReturned = Buffer.from([])
       // check enough ether
       sender.balance += value
       toAccount.balance -= value
@@ -456,6 +459,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         address,
         gasLeft,
       })
+      state.lastReturned = returnValue
       if (returnValue.length) {
         for (let i = 0; i < outLength; i++) {
           memory[outOffset + i] = returnValue[i]
@@ -475,6 +479,10 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       const length = stack.pop().toNumber()
       const val = memory.slice(offset, offset + length)
       state.returnValue = Buffer.from(val)
+      break
+    }
+    case 'RETURNDATASIZE': {
+      stack.push(new BN(state.lastReturned.length))
       break
     }
     case 'DELEGATECALL': {

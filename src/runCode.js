@@ -17,6 +17,7 @@ const runCode = ({
   caller = new BN(0),
   origin = new BN(0),
   callValue = new BN(0),
+  lastReturned = Buffer.from([]),
 }) => {
   const state = {
     programCounter: 0,
@@ -34,6 +35,7 @@ const runCode = ({
     accounts,
     gasLeft,
     runCode,
+    lastReturned,
   }
   let isRunning = true
   while (isRunning) {
