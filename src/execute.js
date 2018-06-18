@@ -1,5 +1,6 @@
 import BN from 'bn.js'
 import createKeccakHash from 'keccak'
+import { fakeBlockChain } from './lib'
 
 const TWO_POW256 = new BN('10000000000000000000000000000000000000000000000000000000000000000', 16)
 const keccak = buf => createKeccakHash('keccak256').update(buf).digest()
@@ -19,6 +20,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     callData,
     gasLeft,
     runCode,
+    block,
   } = state
   switch (opName) {
     // 0s: Stop and Arithmetic Operations
@@ -303,12 +305,18 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'BLOCKHASH': {
-      //TODO
-      process.exit()
+      const blockNumber = stack.pop()
+      const diff = block.header.number.sub(blockNumber)
+      if (diff.gtn(256) || diff.lten(0)) {
+        stack.push(new BN(0))
+      } else {
+        const h = fakeBlockChain.getBlock(blockNumber).hash()
+        stack.push(new BN(h))
+      }
       break
     }
     case 'COINBASE': {
-      //TODO
+      
       process.exit()
       break
     }

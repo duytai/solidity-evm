@@ -1,8 +1,7 @@
-const randomAddress = () => {
-  const address = Buffer.from([...Array(20).keys()].map(i => Math.round(Math.random() * 255)))
-  return address.toString('hex')
-}
+import fakeBlockChain from './fakeBlockChain'
+import randomAddress from './randomAddress'
 
 export {
   randomAddress,
+  fakeBlockChain,
 }

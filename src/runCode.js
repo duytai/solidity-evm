@@ -1,4 +1,5 @@
 import BN from 'bn.js'
+import { fakeBlockChain } from './lib'
 import fetch from './opcodes'
 import execute from './execute'
 
@@ -18,6 +19,7 @@ const runCode = ({
   origin = new BN(0),
   callValue = new BN(0),
   lastReturned = Buffer.from([]),
+  block = fakeBlockChain.getBlock(299),
 }) => {
   const state = {
     programCounter: 0,
@@ -36,6 +38,7 @@ const runCode = ({
     gasLeft,
     runCode,
     lastReturned,
+    block,
   }
   let isRunning = true
   while (isRunning) {
