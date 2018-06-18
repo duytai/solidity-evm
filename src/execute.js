@@ -326,16 +326,18 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'NUMBER': {
-      //TODO
-      process.exit()
+      const { header: { number }} = block
+      stack.push(number)
       break
     }
     case 'DIFFICULTY': {
-      process.exit()
+      const { header: { difficulty }} = block
+      stack.push(difficulty)
       break
     }
     case 'GASLIMIT': {
-      process.exit()
+      const { header: { gasLimit }} = block
+      stack.push(gasLimit)
       break
     }
     case 'POP': {
