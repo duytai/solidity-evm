@@ -316,13 +316,13 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'COINBASE': {
-      
-      process.exit()
+      const { header: { coinbase }} = block
+      stack.push(coinbase)
       break
     }
     case 'TIMESTAMP': {
-      //TODO
-      process.exit()
+      const { header: { timestamp }} = block
+      stack.push(timestamp)
       break
     }
     case 'NUMBER': {

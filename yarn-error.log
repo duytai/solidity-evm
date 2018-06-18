@@ -25,7 +25,8 @@ npm manifest:
       "bn.js": "^4.11.8",
       "ethereumjs-abi": "^0.6.5",
       "ethereumjs-block": "^1.7.1",
-      "keccak": "^1.4.0"
+      "keccak": "^1.4.0",
+      "random-seed": "^0.3.0"
     }
   }
 
@@ -863,6 +864,10 @@ Lockfile:
     version "0.5.0"
     resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
   
+  json-stringify-safe@^5.0.1:
+    version "5.0.1"
+    resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
+  
   json5@^0.5.1:
     version "0.5.1"
     resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
@@ -1035,6 +1040,12 @@ Lockfile:
   prr@~1.0.1:
     version "1.0.1"
     resolved "https://registry.yarnpkg.com/prr/-/prr-1.0.1.tgz#d3fc114ba06995a45ec6893f484ceb1d78f5f476"
+  
+  random-seed@^0.3.0:
+    version "0.3.0"
+    resolved "https://registry.yarnpkg.com/random-seed/-/random-seed-0.3.0.tgz#d945f2e1f38f49e8d58913431b8bf6bb937556cd"
+    dependencies:
+      json-stringify-safe "^5.0.1"
   
   readable-stream@^1.0.33:
     version "1.1.14"

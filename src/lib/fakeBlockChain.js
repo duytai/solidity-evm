@@ -6,7 +6,7 @@ const keccak = buf => createKeccakHash('keccak256').update(buf).digest()
 const blocks = [...Array(300).keys()].map(i => ({
   header: {
     coinbase: new BN(randomAddress(), 'hex'),
-    timestamp: new BN(Date.now()),
+    timestamp: new BN(i + 1024),
     number: new BN(i),
     difficulty: new BN(1024),
     gasLimit: new BN('ffffffff', 'hex'),
