@@ -494,5 +494,9 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       //TODO
       break
     }
+    default: {
+      console.log('NOT IMPLEMNTED YET')
+      process.exit()
+    }
   }
 }
