@@ -3,14 +3,9 @@ import { fakeBlockChain } from './lib'
 import fetch from './opcodes'
 import execute from './execute'
 
-const whiteBuffer = size => {
-  const d = []
-  for (let i = 0; i < size; i++) d.push(0)
-  return Buffer.from(d)
-}
 const runCode = ({
   code = '',
-  callData = whiteBuffer(0),
+  callData = new BN(0),
   storage = {},
   accounts = {},
   address = new BN(0),

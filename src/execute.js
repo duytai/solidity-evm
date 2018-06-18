@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import createKeccakHash from 'keccak'
-import { fakeBlockChain } from './lib'
+import { fakeBlockChain, randomAddress } from './lib'
 
 const TWO_POW256 = new BN('10000000000000000000000000000000000000000000000000000000000000000', 16)
 const keccak = buf => createKeccakHash('keccak256').update(buf).digest()
@@ -495,8 +495,35 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'CREATE': {
-      //TODO
-      process.exit()
+      const newAccountAddress = randomAddress()
+      const value = stack.pop().toNumber()
+      const offset = stack.pop().toNumber()
+      const length = stack.pop().toNumber()
+      const data = memory.slice(offset, offset + length)
+      for (let i = data.length; i < 32; i++) {
+        data[i] = 0
+      }
+      const toAccount = {
+        code: Buffer.from(data),
+        balance: 0,
+        storage: {},
+      }
+      accounts[newAccountAddress] = toAccount
+      const sender = accounts[address.toString('hex')]
+      // TODO: check enough ether
+      sender.balance -= value
+      toAccount.balance += value
+      const { returnValue } = runCode({
+        code: toAccount.code,
+        storage,
+        accounts,
+        address: new BN(newAccountAddress, 'hex'),
+        gasLeft,
+        caller, // TODO: check again for caller or origin
+        origin,
+      })
+      toAccount.code = returnValue
+      stack.push(new BN(newAccountAddress, 'hex'))
       break
     }
     case 'CALLCODE': {

@@ -8,15 +8,15 @@ const { code, callData } = data
 const address = randomAddress()
 const accounts = {
   [address]: {
-    code: '',
+    code,
     balance: 0,
     storage: {},
   }
 }
 // DEPLOY CONTRACT
 const { returnValue } = runCode({
-  code,
   accounts,
+  code: accounts[address].code,
   storage: accounts[address].storage,
   address: new BN(address, 'hex'),
   gasLeft: new BN(1000),
@@ -25,7 +25,7 @@ const { returnValue } = runCode({
 accounts[address].code = returnValue
 console.log(returnValue.toString('hex'))
 // RUN METHOD
-// console.log('----METHOD----')
+console.log('----METHOD----')
 const d = runCode({
   code: accounts[address].code,
   storage: accounts[address].storage,
