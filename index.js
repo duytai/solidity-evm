@@ -6,18 +6,18 @@ import data from './data'
 
 const { code, callData } = data
 const address = randomAddress()
-const storage = {}
 const accounts = {
   [address]: {
     code: '',
     balance: 0,
+    storage: {},
   }
 }
 // DEPLOY CONTRACT
 const { returnValue } = runCode({
   code,
-  storage,
   accounts,
+  storage: accounts[address].storage,
   address: new BN(address, 'hex'),
   gasLeft: new BN(1000),
   caller: new BN(address, 'hex'),
@@ -28,7 +28,7 @@ console.log(returnValue.toString('hex'))
 // console.log('----METHOD----')
 const d = runCode({
   code: accounts[address].code,
-  storage,
+  storage: accounts[address].storage,
   callData,
   accounts,
   address: new BN(address, 'hex'),

@@ -427,14 +427,6 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       stack[swapIndex] = tmp
       break
     }
-    case 'LOG': {
-      break
-    }
-    case 'CREATE': {
-      //TODO
-      process.exit()
-      break
-    }
     case 'CALL': {
       const gasLimit = stack.pop()
       const toAddress = stack.pop().toString('hex')
@@ -482,11 +474,6 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       stack.push(new BN(1))
       break
     }
-    case 'CALLCODE': {
-      //TODO
-      process.exit()
-      break
-    }
     case 'RETURN': {
       const offset = stack.pop().toNumber()
       const length = stack.pop().toNumber()
@@ -505,6 +492,19 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     }
     case 'SUICIDE': {
       //TODO
+      break
+    }
+    case 'CREATE': {
+      //TODO
+      process.exit()
+      break
+    }
+    case 'CALLCODE': {
+      //TODO
+      process.exit()
+      break
+    }
+    case 'LOG': {
       break
     }
     default: {
