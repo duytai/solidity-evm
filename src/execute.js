@@ -220,7 +220,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       const offset = stack.pop().toNumber()
       const length = stack.pop().toNumber()
       const data = Buffer.from(memory.slice(offset, offset + length))
-      stack.push(keccak(data))
+      stack.push(new BN(keccak(data)))
       break
     }
     case 'ADDRESS': {

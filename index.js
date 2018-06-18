@@ -4,7 +4,10 @@ import { randomAddress } from './src/lib'
 import runCode from './src/runCode'
 import data from './data'
 
-const { code, callData } = data
+const {
+  code,
+  callData,
+} = data
 const address = randomAddress()
 const storage = {}
 const accounts = {
