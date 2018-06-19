@@ -15,6 +15,7 @@ const runCode = ({
   callValue = new BN(0),
   lastReturned = Buffer.from([]),
   block = fakeBlockChain.getBlock(299),
+  logOptions = [],
 }) => {
   const state = {
     programCounter: 0,
@@ -42,10 +43,10 @@ const runCode = ({
       code,
      } = state
     const opCode = code[programCounter]
-    console.log(`>> 0x${state.programCounter.toString(16)} ${fetch(opCode).opName}`)
+    logOptions.includes('OPCODE') && console.log(`>> 0x${state.programCounter.toString(16)} ${fetch(opCode).opName}`)
     state.programCounter ++
     execute(fetch(opCode), state)
-    console.log(state.stack)
+    logOptions.includes('STACK') && console.log(state.stack)
     isRunning = state.programCounter < code.length
       && !state.returnValue.length
       && !state.stopped

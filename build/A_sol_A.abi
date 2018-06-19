@@ -1,0 +1,1 @@
+[{"constant":true,"inputs":[],"name":"getX","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"init","type":"uint8"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
