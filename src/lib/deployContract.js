@@ -22,12 +22,15 @@ export default async ({
   ])
   const abi = fuzzData({ buildDir, abiFileName })
   const con = abi.find(({ type }) => type === 'constructor')
-  console.log(`>> Constructor ${con.inputs.map(v => v.value)}`)
-  const conParam = encodeABI({
-    name: '',
-    types: con.inputs.map(({ type }) => type),
-    values: con.inputs.map(({ value }) => value),
-  })
+  let conParam = Buffer.from([])
+  if (con) {
+    console.log(`>> Constructor ${con.inputs.map(v => v.value)}`)
+    conParam = encodeABI({
+      name: '',
+      types: con.inputs.map(({ type }) => type),
+      values: con.inputs.map(({ value }) => value),
+    })
+  }
   const code = fs.readFileSync(`${abiFileName}.bin`, 'utf8')
   // CONTRACT ACCOUNT
   const address = randomAddress()

@@ -1,6 +1,6 @@
 {
   "A": {
-    "constructor": [9],
-    "getX": [] 
+    "constructor": [],
+    "getX": [1] 
   }
 }

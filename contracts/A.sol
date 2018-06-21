@@ -1,11 +1,15 @@
 pragma solidity ^0.4.16;
 
 contract A {
-  uint8 x = 100;
-  constructor(uint8 init) public {
-    x = init;
-  }
-  function getX() public view returns (uint8) {
-    return x;
-  }
+    int x = 1;
+    function doubleX() public view returns (int) {
+        return x * 2;
+    }
+    function getX(int loop) public view returns (int) {
+        int temp = 0;
+        for (int i = 0; i < loop; i++) {
+            temp += doubleX();
+        }
+        return temp;
+    }
 }
