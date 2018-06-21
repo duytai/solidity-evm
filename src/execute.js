@@ -445,6 +445,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         toAccount = {
           code: Buffer.from([]),
           balance: 0,
+          storage: {},
         }
         accounts[toAddress] = toAccount
       }
@@ -456,7 +457,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       const { code } = toAccount
       const { returnValue } = runCode({
         code,
-        storage,
+        storage: toAccount.storage,
         callData: Buffer.from(data),
         accounts,
         address,
@@ -515,7 +516,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       toAccount.balance += value
       const { returnValue } = runCode({
         code: toAccount.code,
-        storage,
+        storage: toAccount.storage,
         accounts,
         address: new BN(newAccountAddress, 'hex'),
         gasLeft,

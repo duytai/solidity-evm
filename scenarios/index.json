@@ -1,6 +1,6 @@
 {
-  "A": {
+  "B": {
     "constructor": [],
-    "getX": [1] 
+    "get": ["0x8adc4855d5cbf54b3c8a478457b9f418d308e7d2"] 
   }
 }
