@@ -10,24 +10,25 @@ export default async ({
   buildDir,
   accounts,
   logOptions,
-  runCode
+  runCode,
 }) => {
-  const { contractName } = await inquirer.prompt([
+  const { abiFileName } = await inquirer.prompt([
     {
       type: 'list',
-      name: 'contractName',
+      name: 'abiFileName',
       message: 'Choose your contract to deploy',
       choices: shell.ls('*.abi').map(i => i.replace('.abi', '')),
     },
   ])
-  const abi = fuzzData({ buildDir, contractName })
+  const abi = fuzzData({ buildDir, abiFileName })
   const con = abi.find(({ type }) => type === 'constructor')
+  console.log(`>> Constructor ${con.inputs.map(v => v.value)}`)
   const conParam = encodeABI({
     name: '',
     types: con.inputs.map(({ type }) => type),
     values: con.inputs.map(({ value }) => value),
   })
-  const code = fs.readFileSync(`${contractName}.bin`, 'utf8')
+  const code = fs.readFileSync(`${abiFileName}.bin`, 'utf8')
   // CONTRACT ACCOUNT
   const address = randomAddress()
   accounts[address] = {
@@ -37,7 +38,7 @@ export default async ({
     ]),
     balance: 0,
     storage: {},
-    contractName,
+    abiFileName,
   }
   // DEPLOY CONTRACT
   const { returnValue } = runCode({

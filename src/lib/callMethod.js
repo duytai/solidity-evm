@@ -13,7 +13,7 @@ export default async ({
     {
       type: 'input',
       name: 'address',
-      message: 'Load contract from address = ',
+      message: 'Load contract from address =',
     },
   ])
   const account = accounts[address]
@@ -21,8 +21,8 @@ export default async ({
     console.log('>> Contract does not exists'.red)
     process.exit()
   }
-  const { contractName } = account
-  const abi = fuzzData({ buildDir, contractName })
+  const { abiFileName } = account
+  const abi = fuzzData({ buildDir, abiFileName })
   const { method } = await inquirer.prompt([
     {
       type: 'list',
@@ -37,6 +37,7 @@ export default async ({
     types: func.inputs.map(({ type }) => type),
     values: func.inputs.map(({ value }) => value),
   })
+  console.log(`>> Params: ${func.inputs.map(({ value }) => value)}`)
   // METHOD CALL
   const { returnValue } = runCode({
     logOptions,

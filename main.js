@@ -29,16 +29,38 @@ import runCode from './src/runCode'
     shell.mv('*.abi', buildDir)
   }
   shell.cd(buildDir)
-  await deployContract({
-    buildDir,
-    accounts,
-    runCode,
-    logOptions,
-  })
-  await callMethod({
-    buildDir,
-    accounts,
-    runCode,
-    logOptions,
-  })
+  let isRunning = true
+  while (isRunning) {
+    const { nextStep } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'nextStep',
+        message: 'do you want to DEPLOY / CALLMETHOD / EXIT',
+        choices: ['DEPLOY', 'CALLMETHOD', 'EXIT'],
+      },
+    ])
+    switch (nextStep) {
+      case 'DEPLOY':
+        await deployContract({
+          buildDir,
+          accounts,
+          runCode,
+          logOptions,
+        })
+        break
+      case 'CALLMETHOD':
+        await callMethod({
+          buildDir,
+          accounts,
+          runCode,
+          logOptions,
+        })
+        break
+      case 'EXIT':
+        isRunning = false
+        break
+      default:
+        break
+    }
+  }
 })()

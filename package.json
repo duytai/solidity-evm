@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "node -r babel-register -r babel-polyfill main.js"
+    "dev": "SCENARIO=$(cat scenarios/index.json) node -r babel-register -r babel-polyfill main.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
