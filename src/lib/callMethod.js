@@ -11,9 +11,15 @@ export default async ({
 }) => {
   const { address } = await inquirer.prompt([
     {
-      type: 'input',
+      type: 'list',
       name: 'address',
-      message: 'Load contract from address =',
+      message: 'Load contract from address',
+      choices: Object
+        .keys(accounts)
+        .map(addr => ({
+          name: `${addr} | ${accounts[addr].abiFileName}`,
+          value: addr,
+        })),
     },
   ])
   const account = accounts[address]

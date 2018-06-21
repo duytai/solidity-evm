@@ -16,7 +16,7 @@ Platform:
 npm manifest: 
   {
     "scripts": {
-      "dev": "node -r babel-register -r babel-polyfill main.js"
+      "dev": "SCENARIO=$(cat scenarios/index.json) node -r babel-register -r babel-polyfill main.js"
     },
     "dependencies": {
       "babel-polyfill": "^6.26.0",
@@ -2398,7 +2398,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: sh
-  Arguments: -c node -r babel-register -r babel-polyfill main.js
+  Arguments: -c SCENARIO=$(cat scenarios/index.json) node -r babel-register -r babel-polyfill main.js
   Directory: /Users/macbookpro/Eth/solidity-evm
   Output:
   
