@@ -8,6 +8,7 @@ export default async ({
   accounts,
   logOptions,
   runCode,
+  currentUserAddress,
 }) => {
   const { address } = await inquirer.prompt([
     {
@@ -54,7 +55,8 @@ export default async ({
     storage: account.storage,
     address: new BN(address, 'hex'),
     gasLeft: new BN(1000),
-    caller: new BN(address, 'hex'),
+    caller: new BN(currentUserAddress, 'hex'),
+    origin: new BN(currentUserAddress, 'hex'),
     logs,
   })
   console.log(`>> Return value: ${returnValue.toString('hex').green}`)

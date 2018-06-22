@@ -4,7 +4,7 @@ import fetch from './opcodes'
 import execute from './execute'
 
 const runCode = ({
-  code = '',
+  code = Buffer.from([]),
   callData = new BN(0),
   storage = {},
   accounts = {},

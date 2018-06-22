@@ -1,11 +1,18 @@
 import shell from 'shelljs'
 import inquirer from 'inquirer'
 import colors from 'colors'
-import { deployContract, callMethod } from './src/lib'
+import { deployContract, callMethod, randomAddress } from './src/lib'
 import runCode from './src/runCode'
 
 (async () => {
-  const accounts = {}
+  const currentUserAddress = randomAddress()
+  const accounts = {
+    [currentUserAddress]: {
+      code: Buffer.from([]),
+      balance: 0,
+      contractName: null,
+    }
+  }
   const contractDir = `${shell.pwd()}/contracts/`
   const buildDir = `${shell.pwd()}/build/`
   const { compile, logOptions } = await inquirer.prompt([
@@ -46,6 +53,7 @@ import runCode from './src/runCode'
           accounts,
           runCode,
           logOptions,
+          currentUserAddress,
         })
         break
       case 'CALLMETHOD':
@@ -54,6 +62,7 @@ import runCode from './src/runCode'
           accounts,
           runCode,
           logOptions,
+          currentUserAddress,
         })
         break
       case 'EXIT':

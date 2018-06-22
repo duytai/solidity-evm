@@ -11,6 +11,7 @@ export default async ({
   accounts,
   logOptions,
   runCode,
+  currentUserAddress,
 }) => {
   const { abiFileName } = await inquirer.prompt([
     {
@@ -44,6 +45,7 @@ export default async ({
     abiFileName,
   }
   // DEPLOY CONTRACT
+  const logs = []
   const { returnValue } = runCode({
     logOptions,
     accounts,
@@ -51,8 +53,11 @@ export default async ({
     storage: accounts[address].storage,
     address: new BN(address, 'hex'),
     gasLeft: new BN(1000),
-    caller: new BN(address, 'hex'),
+    caller: new BN(currentUserAddress, 'hex'),
+    origin: new BN(currentUserAddress, 'hex'),
+    logs,
   })
   accounts[address].code = returnValue
   console.log(`>> Contract Address: ${address.green}`)
+  console.log(logs)
 }
