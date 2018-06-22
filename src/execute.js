@@ -454,15 +454,14 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       sender.balance += value
       toAccount.balance -= value
       // run code
-      const { code } = toAccount
       const { returnValue } = runCode({
-        code,
+        code: toAccount.code,
         storage: toAccount.storage,
         callData: Buffer.from(data),
         accounts,
-        address,
+        address: new BN(toAddress, 'hex'),
         gasLeft,
-        caller,
+        caller: address,
         origin,
       })
       state.lastReturned = returnValue
@@ -536,7 +535,8 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     default: {
-      console.log('NOT IMPLEMENTED YET')
+      console.log(`>> 0x${programCounter.toString(16)} ${opName}`)
+      console.log('>> NOT IMPLEMENTED YET')
       process.exit()
     }
   }

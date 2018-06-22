@@ -9,8 +9,8 @@ contract A {
 
 
 contract B {
-    function get(address addr) public view returns (int) {
-       A a = A(addr);
+    function get() public view returns (int) {
+       A a = new A();
        return a.getX();
     }
 }
