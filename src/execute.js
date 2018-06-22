@@ -21,6 +21,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
     gasLeft,
     runCode,
     block,
+    logs,
   } = state
   switch (opName) {
     // 0s: Stop and Arithmetic Operations
@@ -463,6 +464,7 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         gasLeft,
         caller: address,
         origin,
+        logs,
       })
       state.lastReturned = returnValue
       if (returnValue.length) {
@@ -519,8 +521,9 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
         accounts,
         address: new BN(newAccountAddress, 'hex'),
         gasLeft,
-        caller, // TODO: check again for caller or origin
+        caller: address,
         origin,
+        logs,
       })
       toAccount.code = returnValue
       stack.push(new BN(newAccountAddress, 'hex'))
@@ -532,6 +535,19 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'LOG': {
+      const topics = []
+      const offset = stack.pop().toNumber()
+      const dataLength = stack.pop().toNumber()
+      const numOfTopics = opCode - 0xa0
+      const data = memory.slice(offset, offset + dataLength)
+      for (let i = 0; i < numOfTopics; i++) {
+        topics.push(stack.pop().toString('hex'))
+      }
+      logs.push({
+        topics,
+        address: address.toString('hex'),
+        data: Buffer.from(data).toString('hex'),
+      })
       break
     }
     default: {

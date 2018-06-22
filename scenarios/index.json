@@ -1,6 +1,8 @@
 {
   "B": {
-    "constructor": [],
-    "get": [] 
+    "constructor": ["0x8adc4855d5cbf54b3c8a478457b9f418d308e7d2"]
+  },
+  "A": {
+  	"showLog": []
   }
 }

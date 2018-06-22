@@ -45,6 +45,7 @@ export default async ({
   })
   console.log(`>> Params: ${func.inputs.map(({ value }) => value)}`)
   // METHOD CALL
+  const logs = []
   const { returnValue } = runCode({
     logOptions,
     accounts,
@@ -54,6 +55,8 @@ export default async ({
     address: new BN(address, 'hex'),
     gasLeft: new BN(1000),
     caller: new BN(address, 'hex'),
+    logs,
   })
   console.log(`>> Return value: ${returnValue.toString('hex').green}`)
+  console.log(logs)
 }

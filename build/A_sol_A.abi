@@ -1,1 +1,1 @@
-[{"constant":true,"inputs":[],"name":"getX","outputs":[{"name":"","type":"int256"}],"payable":false,"stateMutability":"view","type":"function"}]
+[{"constant":false,"inputs":[],"name":"showLog","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]

@@ -16,6 +16,7 @@ const runCode = ({
   lastReturned = Buffer.from([]),
   block = fakeBlockChain.getBlock(299),
   logOptions = [],
+  logs = [],
 }) => {
   const state = {
     programCounter: 0,
@@ -35,6 +36,7 @@ const runCode = ({
     runCode,
     lastReturned,
     block,
+    logs,
   }
   let isRunning = true
   while (isRunning) {
@@ -47,6 +49,7 @@ const runCode = ({
     state.programCounter ++
     execute(fetch(opCode), state)
     logOptions.includes('STACK') && console.log(state.stack)
+    console.log(opCode)
     isRunning = state.programCounter < code.length
       && !state.returnValue.length
       && !state.stopped

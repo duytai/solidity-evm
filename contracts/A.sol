@@ -1,16 +1,14 @@
 pragma solidity ^0.4.16;
 
 contract A {
-    int x = 10;
-    function getX() public view returns(int) {
-        return x;
+    function showLog() public {
+        log0(bytes32(msg.sender));
+        log0(bytes32(tx.origin));   
     }
 }
 
-
 contract B {
-    function get() public view returns (int) {
-       A a = new A();
-       return a.getX();
+    constructor(address a) public {
+        a.call(bytes4(keccak256("showLog()")));
     }
 }
