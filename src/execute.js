@@ -488,8 +488,51 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'DELEGATECALL': {
-      //TODO
-      process.exit()
+      const gasLimit = stack.pop()
+      const toAddress = stack.pop().toString('hex')
+      const value = stack.pop().toNumber()
+      const inOffset = stack.pop().toNumber()
+      const inLength = stack.pop().toNumber()
+      const outOffset = stack.pop().toNumber()
+      const outLength = stack.pop().toNumber()
+      const data = memory.slice(inOffset, inOffset + inLength)
+      for (let i = data.length; i < 32; i++) {
+        data[i] = 0
+      }
+      let toAccount = accounts[toAddress]
+      const sender = accounts[address.toString('hex')]
+      if (!toAccount) {
+        toAccount = {
+          code: Buffer.from([]),
+          balance: 0,
+          storage: {},
+        }
+        accounts[toAddress] = toAccount
+      }
+      state.lastReturned = Buffer.from([])
+      // TODO: check enough ether
+      sender.balance += value
+      toAccount.balance -= value
+      // run code
+      const { returnValue } = runCode({
+        code: toAccount.code,
+        storage,
+        callData: Buffer.from(data),
+        accounts,
+        address,
+        gasLeft,
+        caller,
+        origin,
+        logs,
+      })
+      state.lastReturned = returnValue
+      if (returnValue.length) {
+        for (let i = 0; i < outLength; i++) {
+          memory[outOffset + i] = returnValue[i]
+        }
+      }
+      // SUCCESS | TODO: FAILED
+      stack.push(new BN(1))
       break
     }
     case 'SUICIDE': {
@@ -530,8 +573,51 @@ export default ({ opCode, opName, numIns, numOuts }, state) => {
       break
     }
     case 'CALLCODE': {
-      //TODO
-      process.exit()
+      const gasLimit = stack.pop()
+      const toAddress = stack.pop().toString('hex')
+      const value = stack.pop().toNumber()
+      const inOffset = stack.pop().toNumber()
+      const inLength = stack.pop().toNumber()
+      const outOffset = stack.pop().toNumber()
+      const outLength = stack.pop().toNumber()
+      const data = memory.slice(inOffset, inOffset + inLength)
+      for (let i = data.length; i < 32; i++) {
+        data[i] = 0
+      }
+      let toAccount = accounts[toAddress]
+      const sender = accounts[address.toString('hex')]
+      if (!toAccount) {
+        toAccount = {
+          code: Buffer.from([]),
+          balance: 0,
+          storage: {},
+        }
+        accounts[toAddress] = toAccount
+      }
+      state.lastReturned = Buffer.from([])
+      // TODO: check enough ether
+      sender.balance += value
+      toAccount.balance -= value
+      // run code
+      const { returnValue } = runCode({
+        code: toAccount.code,
+        storage,
+        callData: Buffer.from(data),
+        accounts,
+        address,
+        gasLeft,
+        caller: address,
+        origin,
+        logs,
+      })
+      state.lastReturned = returnValue
+      if (returnValue.length) {
+        for (let i = 0; i < outLength; i++) {
+          memory[outOffset + i] = returnValue[i]
+        }
+      }
+      // SUCCESS | TODO: FAILED
+      stack.push(new BN(1))
       break
     }
     case 'LOG': {
